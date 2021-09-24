@@ -1,28 +1,37 @@
 <template>
 	<div>
-		<div v-for="ask in asks" :key="ask.id" >{{ ask.title }}</div>
+		<p v-for="ask in fetchedAsk" :key="ask.id" >
+			<a :href="ask.url">
+				{{ ask.title }}
+			</a>
+			<small>{{ ask.time_ago }} by {{ ask.user }}</small>
+		</p>
+<!--		<div v-for="ask in asks" :key="ask.id" >{{ ask.title }}</div>-->
 	</div>
 </template>
 
 <script>
-import {fetchAskList} from "@/api/index";
+import { mapState, mapGetters } from 'vuex';
 
 export default {
 	name: "AskView.vue",
 
-	data() {
-		return {
-			asks: [],
-		}
+	computed: {
+		...mapGetters([
+			'fetchedAsk'
+		])
+
+		// ...mapGetters({
+		// 	asks: 'fetchedAsk'
+		// })
+
+		// ...mapState({
+		// 	asks: state => state.asks
+		// })
 	},
+
 	created() {
-		fetchAskList()
-			.then(res => {
-				this.asks = res.data;
-			})
-			.catch(err => {
-				console.log(err);
-			})
+		this.$store.dispatch('FETCH_ASKS');
 	}
 }
 </script>
